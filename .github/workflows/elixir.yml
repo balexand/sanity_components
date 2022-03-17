@@ -19,19 +19,18 @@ jobs:
         with:
           elixir-version: ${{ matrix.elixir-version }}
           otp-version: ${{ matrix.otp-version }}
+
       - name: Install dependencies
         run: mix deps.get
+
       - name: Compile deps
         run: MIX_ENV=test mix deps.compile
+
       - name: Compile
         run: MIX_ENV=test mix compile --warnings-as-errors
+
       - name: Run tests
         run: mix test --warnings-as-errors
-      - name: Run integration tests
-        env:
-          ELIXIR_SANITY_TEST_PROJECT_ID: ${{ secrets.ELIXIR_SANITY_TEST_PROJECT_ID }}
-          ELIXIR_SANITY_TEST_TOKEN: ${{ secrets.ELIXIR_SANITY_TEST_TOKEN }}
-        if: env.ELIXIR_SANITY_TEST_TOKEN
-        run: mix test --warnings-as-errors --only integration
+
       - name: Check format
         run: mix format --check-formatted
