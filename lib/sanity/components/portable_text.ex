@@ -1,5 +1,5 @@
 defmodule Sanity.Components.PortableText do
-  @moduledoc """
+  @moduledoc ~S'''
   For rending [Sanity CMS portable text](https://www.sanity.io/docs/presenting-block-text).
 
   ## Examples
@@ -24,30 +24,36 @@ defmodule Sanity.Components.PortableText do
 
       ~H"<Sanity.Components.PortableText.portable_text value={@portable_text} />"
 
-  ### Custom marks
+  ### Custom rendering
 
-      defmodule CustomMark do
+      defmodule CustomBlock do
         use Phoenix.Component
-        use PortableText
+        use Sanity.Components.PortableText
 
         @impl true
-        def mark(%{mark_type: "em"} = assigns) do
-          ~H"<em class="awesome-em"><%= render_slot(@inner_block) %></em>"
+        def block(%{value: %{style: "normal"}} = assigns) do
+          ~H"""
+          <div class="custom-normal"><%= render_slot(@inner_block) %></div>
+          """
         end
 
-        def mark(assigns), do: super(assigns)
+        def block(assigns), do: super(assigns)
       end
 
   Then render the component like:
 
-      ~H"<Sanity.Components.PortableText.portable_text mod={CustomMark} value={@portable_text} />"
-  """
+      ~H"<Sanity.Components.PortableText.portable_text mod={CustomBlock} value={@portable_text} />"
+
+  Similarly, marks and types can be customized by defining `mark/1` and `type/1` functions in the module.
+  '''
 
   use Phoenix.Component
 
   require Logger
 
   defmodule Behaviour do
+    @moduledoc false
+
     @callback block(map()) :: Phoenix.LiveView.Rendered.t()
     @callback mark(map()) :: Phoenix.LiveView.Rendered.t()
     @callback type(map()) :: Phoenix.LiveView.Rendered.t()
