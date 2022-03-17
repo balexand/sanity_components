@@ -1,8 +1,48 @@
 defmodule Sanity.Components.Image do
+  @moduledoc """
+  For rendering a [Sanity image asset](https://www.sanity.io/docs/assets).
+
+  ## Examples
+
+      use Phoenix.Component
+
+      # ...
+
+      # Example of image asset returned by Sanity CMS API
+      assigns = %{
+        image: %{
+          _id: "image-da994d9e87efb226111cb83dbbab832d45b1365e-1500x750-jpg",
+          _type: "sanity.imageAsset",
+          metadata: %{
+            dimensions: %{height: 750, width: 1500},
+            palette: %{dominant: %{background: "#0844c5"}}
+          },
+          url:
+            "https://cdn.sanity.io/images/csbsxnjq/production/da994d9e87efb226111cb83dbbab832d45b1365e-1500x750.jpg"
+        }
+      }
+
+      ~H"<Sanity.Components.Image.sanity_image image={@image} />"
+  """
+
   use Phoenix.Component
 
   @breakpoints [320, 768, 1024, 1600, 2048]
 
+  @doc """
+  Renders a responsive sanity image.
+
+  The `src` and `srcset` attributes will be automatically set. Sanity CMS will [take care of
+  resizing the images and serving WebP images to supported
+  browsers](https://www.sanity.io/docs/image-urls). The `sizes` attribute will default to `100vw`.
+
+  The `width` and `height` attributes will be automatically set. This ensures that on [modern
+  browsers](https://caniuse.com/mdn-html_elements_img_aspect_ratio_computed_from_attributes)  the
+  image will have the correct aspect ratio before the image loads. This avoids [layout
+  shift](https://web.dev/cls/).
+
+  See module doc for example.
+  """
   def sanity_image(assigns) do
     {%{
        metadata: %{

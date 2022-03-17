@@ -1,4 +1,48 @@
 defmodule Sanity.Components.PortableText do
+  @moduledoc """
+  For rending [Sanity CMS portable text](https://www.sanity.io/docs/presenting-block-text).
+
+  ## Examples
+
+  ### Basic example
+
+      use Phoenix.Component
+
+      # ...
+
+      assigns = %{
+        portable_text: [
+          %{
+            _key: "f71173c80e3a",
+            _type: "block",
+            children: [%{_key: "d6c419dcf485", _type: "span", marks: [], text: "Test paragraph."}],
+            mark_defs: [],
+            style: "normal"
+          }
+        ]
+      }
+
+      ~H"<Sanity.Components.PortableText.portable_text value={@portable_text} />"
+
+  ### Custom marks
+
+      defmodule CustomMark do
+        use Phoenix.Component
+        use PortableText
+
+        @impl true
+        def mark(%{mark_type: "em"} = assigns) do
+          ~H"<em class="awesome-em"><%= render_slot(@inner_block) %></em>"
+        end
+
+        def mark(assigns), do: super(assigns)
+      end
+
+  Then render the component like:
+
+      ~H"<Sanity.Components.PortableText.portable_text mod={CustomMark} value={@portable_text} />"
+  """
+
   use Phoenix.Component
 
   require Logger
@@ -23,6 +67,9 @@ defmodule Sanity.Components.PortableText do
     end
   end
 
+  @doc """
+  Renders Sanity CMS portable text. See module doc for examples.
+  """
   def portable_text(assigns) do
     mod = Map.get(assigns, :mod, __MODULE__)
 

@@ -1,4 +1,4 @@
-defmodule SanityComponents.MixProject do
+defmodule Sanity.Components.MixProject do
   use Mix.Project
 
   @version "0.1.0"
@@ -6,7 +6,8 @@ defmodule SanityComponents.MixProject do
   def project do
     [
       app: :sanity_components,
-      description: "Phoenix components for rendering Sanity CMS data, including portable text.",
+      description:
+        "Phoenix components for rendering Sanity CMS data, including portable text and images.",
       version: @version,
       elixir: "~> 1.12",
       start_permanent: Mix.env() == :prod,
