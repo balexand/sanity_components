@@ -1,5 +1,7 @@
 # `Sanity.Components`
 
+[![Package](https://img.shields.io/badge/-Package-important)](https://hex.pm/packages/sanity_components) [![Documentation](https://img.shields.io/badge/-Documentation-blueviolet)](https://hexdocs.pm/sanity_components)
+
 **TODO: Add description**
 
 ## Installation

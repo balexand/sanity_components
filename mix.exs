@@ -1,13 +1,26 @@
 defmodule SanityComponents.MixProject do
   use Mix.Project
 
+  @version "0.1.0"
+
   def project do
     [
       app: :sanity_components,
-      version: "0.1.0",
+      description: "Phoenix components for rendering Sanity CMS data, including portable text.",
+      version: @version,
       elixir: "~> 1.12",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      package: [
+        licenses: ["MIT"],
+        links: %{"GitHub" => "https://github.com/balexand/sanity_components"}
+      ],
+      docs: [
+        extras: ["README.md"],
+        main: "readme",
+        source_ref: "v#{@version}",
+        source_url: "https://github.com/balexand/sanity_components"
+      ]
     ]
   end
 
