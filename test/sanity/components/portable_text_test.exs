@@ -2,8 +2,9 @@ defmodule Sanity.Components.PortableTextTest do
   use ExUnit.Case, async: true
   doctest Sanity.Components.PortableText, import: true
 
-  alias Sanity.Components.PortableText
+  import ExUnit.CaptureLog
   import Phoenix.LiveViewTest
+  alias Sanity.Components.PortableText
 
   @bold_and_italic [
     %{
@@ -98,6 +99,35 @@ defmodule Sanity.Components.PortableTextTest do
       _key: "f71173c80e3a",
       _type: "block",
       children: [%{_key: "d6c419dcf485", _type: "span", marks: [], text: "Test paragraph."}],
+      mark_defs: [],
+      style: "normal"
+    }
+  ]
+
+  @unknown_block [
+    %{
+      _key: "f71173c80e3a",
+      _type: "block",
+      children: [%{_key: "d6c419dcf485", _type: "span", marks: [], text: "Test paragraph."}],
+      mark_defs: [],
+      style: "style-x"
+    }
+  ]
+
+  @unknown_mark [
+    %{
+      _key: "2c5a598e37ca",
+      _type: "block",
+      children: [
+        %{_key: "cd98c64ed2fb", _type: "span", marks: [], text: "A "},
+        %{
+          _key: "61800f03d7ef",
+          _type: "span",
+          marks: ["light"],
+          text: "mark"
+        },
+        %{_key: "fc8987aec34a", _type: "span", marks: [], text: "."}
+      ],
       mark_defs: [],
       style: "normal"
     }
@@ -207,20 +237,6 @@ defmodule Sanity.Components.PortableTextTest do
              """
   end
 
-  test "custom type image without custom type component raises exception" do
-    # FIXME log error instead of error by default
-    # FIXME tests for missing mark
-    # FIXME tests for missing block
-
-    assert_raise(
-      FunctionClauseError,
-      "no function clause matching in Sanity.Components.PortableText.type/1",
-      fn ->
-        render_component(&PortableText.portable_text/1, value: @image)
-      end
-    )
-  end
-
   test "link" do
     assert render_component(&PortableText.portable_text/1, value: @link) == """
            <p>
@@ -235,6 +251,41 @@ defmodule Sanity.Components.PortableTextTest do
              Test paragraph.
            </p>
            """
+  end
+
+  test "unknown block" do
+    log =
+      capture_log([level: :error], fn ->
+        assert render_component(&PortableText.portable_text/1, value: @unknown_block) == """
+               <p>
+                 Test paragraph.
+               </p>
+               """
+      end)
+
+    assert log =~ ~S'[error] unknown block style: "style-x"'
+  end
+
+  test "unknown mark" do
+    log =
+      capture_log([level: :error], fn ->
+        assert render_component(&PortableText.portable_text/1, value: @unknown_mark) == """
+               <p>
+                 A mark.
+               </p>
+               """
+      end)
+
+    assert log =~ ~S'[error] unknown mark type: "light"'
+  end
+
+  test "unknown type" do
+    log =
+      capture_log([level: :error], fn ->
+        assert render_component(&PortableText.portable_text/1, value: @image) == "\n"
+      end)
+
+    assert log =~ ~S'[error] unknown type: "image"'
   end
 
   defmodule AssertAssignsBlock do
