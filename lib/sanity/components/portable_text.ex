@@ -90,17 +90,19 @@ defmodule Sanity.Components.PortableText do
   end
 
   defp nest_list([%{level: level} = item | rest], %{level: level} = acc) do
-    nest_list(rest, update_in(acc.items, fn items -> [item | items] end))
+    nest_list(rest, prepend_item(acc, item))
   end
 
-  defp nest_list([item | _] = items, acc) when item.level > acc.level do
+  defp nest_list([%{level: level, list_item: list_item} | _] = items, acc)
+       when level > acc.level do
     {deeper_items, rest} = Enum.split_while(items, fn i -> i.level > acc.level end)
 
-    nested_item =
-      nest_list(deeper_items, %{type: item.list_item, level: acc.level + 1, items: []})
+    nested_list = nest_list(deeper_items, %{type: list_item, level: acc.level + 1, items: []})
 
-    nest_list(rest, update_in(acc.items, fn items -> [nested_item | items] end))
+    nest_list(rest, prepend_item(acc, nested_list))
   end
+
+  defp prepend_item(%{items: items} = list, item), do: %{list | items: [item | items]}
 
   @doc """
   Renders Sanity CMS portable text. See module doc for examples.
