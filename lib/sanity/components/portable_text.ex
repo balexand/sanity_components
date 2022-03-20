@@ -73,6 +73,35 @@ defmodule Sanity.Components.PortableText do
     end
   end
 
+  def blocks_to_nested_lists(blocks) do
+    blocks
+    |> Enum.chunk_by(fn block -> block[:list_item] end)
+    |> Enum.map(fn
+      [%{list_item: list_item} | _] = items when not is_nil(list_item) ->
+        nest_list(items, %{type: list_item, level: 1, items: []})
+
+      [%{} | _] = blocks ->
+        %{type: "blocks", items: blocks}
+    end)
+  end
+
+  defp nest_list([], acc) do
+    update_in(acc.items, &Enum.reverse/1)
+  end
+
+  defp nest_list([%{level: level} = item | rest], %{level: level} = acc) do
+    nest_list(rest, update_in(acc.items, fn items -> [item | items] end))
+  end
+
+  defp nest_list([item | _] = items, acc) when item.level > acc.level do
+    {deeper_items, rest} = Enum.split_while(items, fn i -> i.level > acc.level end)
+
+    nested_item =
+      nest_list(deeper_items, %{type: item.list_item, level: acc.level + 1, items: []})
+
+    nest_list(rest, update_in(acc.items, fn items -> [nested_item | items] end))
+  end
+
   @doc """
   Renders Sanity CMS portable text. See module doc for examples.
   """
@@ -80,7 +109,13 @@ defmodule Sanity.Components.PortableText do
     mod = Map.get(assigns, :mod, __MODULE__)
 
     ~H"""
-    <%= for block <- @value do %><.render_with mod={mod} func={:type} value={block} />
+    <%= for group <- blocks_to_nested_lists(@value) do %><.blocks_or_list mod={mod} group={group} /><% end %>
+    """
+  end
+
+  defp blocks_or_list(%{group: %{type: "blocks"}} = assigns) do
+    ~H"""
+    <%= for block <- @group.items do %><.render_with mod={@mod} func={:type} value={block} />
     <% end %>
     """
   end

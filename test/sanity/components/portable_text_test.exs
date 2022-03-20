@@ -94,6 +94,72 @@ defmodule Sanity.Components.PortableTextTest do
     }
   ]
 
+  @lists [
+    %{
+      _key: "2cd554b8888a",
+      _type: "block",
+      children: [
+        %{_key: "a62c8ea8edfb", _type: "span", marks: [], text: "paragraph"}
+      ],
+      mark_defs: [],
+      style: "normal"
+    },
+    %{
+      _key: "1e3423161b22",
+      _type: "block",
+      children: [%{_key: "909d56f6e943", _type: "span", marks: [], text: "b1"}],
+      level: 1,
+      list_item: "bullet",
+      mark_defs: [],
+      style: "normal"
+    },
+    %{
+      _key: "ac40b45bdd3d",
+      _type: "block",
+      children: [%{_key: "3ab5b9a1317d", _type: "span", marks: [], text: "b2"}],
+      level: 1,
+      list_item: "bullet",
+      mark_defs: [],
+      style: "normal"
+    },
+    %{
+      _key: "d33bfd25f1de",
+      _type: "block",
+      children: [%{_key: "2f4f7d0a6f6c", _type: "span", marks: [], text: "b3"}],
+      level: 3,
+      list_item: "bullet",
+      mark_defs: [],
+      style: "normal"
+    },
+    %{
+      _key: "413f085a7217",
+      _type: "block",
+      children: [%{_key: "a1cf6b208373", _type: "span", marks: [], text: "one"}],
+      level: 1,
+      list_item: "number",
+      mark_defs: [],
+      style: "normal"
+    },
+    %{
+      _key: "032199b04a97",
+      _type: "block",
+      children: [%{_key: "1c07f14262aa", _type: "span", marks: [], text: "aaa"}],
+      level: 2,
+      list_item: "number",
+      mark_defs: [],
+      style: "normal"
+    },
+    %{
+      _key: "8df4318762fb",
+      _type: "block",
+      children: [%{_key: "a1739b477855", _type: "span", marks: [], text: "two"}],
+      level: 1,
+      list_item: "number",
+      mark_defs: [],
+      style: "normal"
+    }
+  ]
+
   @paragraph [
     %{
       _key: "f71173c80e3a",
@@ -244,6 +310,137 @@ defmodule Sanity.Components.PortableTextTest do
            </p>
            """
   end
+
+  test "blocks_to_nested_lists" do
+    assert PortableText.blocks_to_nested_lists(@lists) == [
+             %{
+               type: "blocks",
+               items: [
+                 %{
+                   _key: "2cd554b8888a",
+                   _type: "block",
+                   children: [
+                     %{_key: "a62c8ea8edfb", _type: "span", marks: [], text: "paragraph"}
+                   ],
+                   mark_defs: [],
+                   style: "normal"
+                 }
+               ]
+             },
+             %{
+               type: "bullet",
+               level: 1,
+               items: [
+                 %{
+                   _key: "1e3423161b22",
+                   _type: "block",
+                   children: [%{_key: "909d56f6e943", _type: "span", marks: [], text: "b1"}],
+                   level: 1,
+                   list_item: "bullet",
+                   mark_defs: [],
+                   style: "normal"
+                 },
+                 %{
+                   _key: "ac40b45bdd3d",
+                   _type: "block",
+                   children: [%{_key: "3ab5b9a1317d", _type: "span", marks: [], text: "b2"}],
+                   level: 1,
+                   list_item: "bullet",
+                   mark_defs: [],
+                   style: "normal"
+                 },
+                 %{
+                   type: "bullet",
+                   level: 2,
+                   items: [
+                     %{
+                       type: "bullet",
+                       level: 3,
+                       items: [
+                         %{
+                           _key: "d33bfd25f1de",
+                           _type: "block",
+                           children: [
+                             %{_key: "2f4f7d0a6f6c", _type: "span", marks: [], text: "b3"}
+                           ],
+                           level: 3,
+                           list_item: "bullet",
+                           mark_defs: [],
+                           style: "normal"
+                         }
+                       ]
+                     }
+                   ]
+                 }
+               ]
+             },
+             %{
+               type: "number",
+               level: 1,
+               items: [
+                 %{
+                   _key: "413f085a7217",
+                   _type: "block",
+                   children: [%{_key: "a1cf6b208373", _type: "span", marks: [], text: "one"}],
+                   level: 1,
+                   list_item: "number",
+                   mark_defs: [],
+                   style: "normal"
+                 },
+                 %{
+                   type: "number",
+                   level: 2,
+                   items: [
+                     %{
+                       _key: "032199b04a97",
+                       _type: "block",
+                       children: [%{_key: "1c07f14262aa", _type: "span", marks: [], text: "aaa"}],
+                       level: 2,
+                       list_item: "number",
+                       mark_defs: [],
+                       style: "normal"
+                     }
+                   ]
+                 },
+                 %{
+                   _key: "8df4318762fb",
+                   _type: "block",
+                   children: [%{_key: "a1739b477855", _type: "span", marks: [], text: "two"}],
+                   level: 1,
+                   list_item: "number",
+                   mark_defs: [],
+                   style: "normal"
+                 }
+               ]
+             }
+           ]
+  end
+
+  # test "lists" do
+  #   assert render_component(&PortableText.portable_text/1, value: @lists) == """
+  #          <p>
+  #            paragraph
+  #          </p>
+  #          <p>
+  #            b1
+  #          </p>
+  #          <p>
+  #            b2
+  #          </p>
+  #          <p>
+  #            b3
+  #          </p>
+  #          <p>
+  #            one
+  #          </p>
+  #          <p>
+  #            aaa
+  #          </p>
+  #          <p>
+  #            two
+  #          </p>
+  #          """
+  # end
 
   test "paragraph" do
     assert render_component(&PortableText.portable_text/1, value: @paragraph) == """
