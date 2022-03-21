@@ -73,6 +73,17 @@ defmodule Sanity.Components.PortableText do
     end
   end
 
+  @doc """
+  Renders Sanity CMS portable text. See module doc for examples.
+  """
+  def portable_text(assigns) do
+    mod = Map.get(assigns, :mod, __MODULE__)
+
+    ~H"""
+    <%= for group <- blocks_to_nested_lists(@value) do %><.blocks_or_list mod={mod} value={group} /><% end %>
+    """
+  end
+
   def blocks_to_nested_lists(blocks) do
     blocks
     |> Enum.chunk_by(fn block -> block[:list_item] end)
@@ -128,17 +139,6 @@ defmodule Sanity.Components.PortableText do
   end
 
   defp prepend_item(item, %{items: items} = list), do: %{list | items: [item | items]}
-
-  @doc """
-  Renders Sanity CMS portable text. See module doc for examples.
-  """
-  def portable_text(assigns) do
-    mod = Map.get(assigns, :mod, __MODULE__)
-
-    ~H"""
-    <%= for group <- blocks_to_nested_lists(@value) do %><.blocks_or_list mod={mod} value={group} /><% end %>
-    """
-  end
 
   defp blocks_or_list(%{value: %{type: "blocks"}} = assigns) do
     ~H"""
