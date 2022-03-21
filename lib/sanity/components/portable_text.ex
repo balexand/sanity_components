@@ -126,9 +126,7 @@ defmodule Sanity.Components.PortableText do
 
   defp empty_list_block(%{level: level, list_item: list_item}) do
     %{
-      # _key must be unique within list, but we will only be inserting one empty value per list so
-      # we can use a constant
-      _key: "emptyitem",
+      _key: :crypto.strong_rand_bytes(6) |> Base.encode16(case: :lower),
       _type: "block",
       children: [],
       level: level,
