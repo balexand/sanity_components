@@ -179,9 +179,15 @@ defmodule Sanity.Components.PortableText do
   defp list_item(assigns) do
     ~H"""
     <li>
-      <%= for child <- @value.children do %><.marks marks={child.marks} {shared_props(assigns)}><%= child.text %></.marks><% end %>
+      <.children {shared_props(assigns)} />
       <%= if @value[:sub_list] do %><.blocks_or_list mod={@mod} value={@value.sub_list} /><% end %>
     </li>
+    """
+  end
+  
+  defp children(assigns) do
+    ~H"""
+    <%= for child <- @value.children do %><.marks marks={child.marks} {shared_props(assigns)}><%= child.text %></.marks><% end %>
     """
   end
 
@@ -190,7 +196,7 @@ defmodule Sanity.Components.PortableText do
   def type(%{value: %{_type: "block"}} = assigns) do
     ~H"""
     <.render_with func={:block} {shared_props(assigns)}>
-      <%= for child <- @value.children do %><.marks marks={child.marks} {shared_props(assigns)}><%= child.text %></.marks><% end %>
+      <.children {shared_props(assigns)} />
     </.render_with>
     """
   end
