@@ -241,39 +241,50 @@ defmodule Sanity.Components.PortableTextTest do
     def type(assigns), do: super(assigns)
   end
 
-  defp render_trimmed(component, assigns) do
-    render_component(component, assigns)
-    |> String.trim_leading()
+  defp render_trimmed(component, assigns, opts \\ []) do
+    result =
+      render_component(component, assigns)
+      |> String.split("\n")
+      |> Enum.map(fn string ->
+        case Keyword.get(opts, :trim, :trailing) do
+          :both -> String.trim(string)
+          :trailing -> String.trim_trailing(string)
+        end
+      end)
+      |> Enum.join("\n")
+      |> String.trim()
+
+    result <> "\n"
   end
 
   test "blocks" do
-    assert render_trimmed(&PortableText.portable_text/1, value: @blocks) == """
+    assert render_trimmed(&PortableText.portable_text/1, [value: @blocks], trim: :both) == """
            <h1>
-             Head 1
+           Head 1
            </h1>
 
            <h2>
-             Head 2
+           Head 2
            </h2>
 
            <h3>
-             Head 3
+           Head 3
            </h3>
 
            <h4>
-             Head 4
+           Head 4
            </h4>
 
            <h5>
-             Head 5
+           Head 5
            </h5>
 
            <h6>
-             Head 6
+           Head 6
            </h6>
 
            <blockquote>
-             quote
+           quote
            </blockquote>
            """
   end
@@ -438,31 +449,59 @@ defmodule Sanity.Components.PortableTextTest do
            ]
   end
 
-  # test "lists" do
-  #   assert render_component(&PortableText.portable_text/1, value: @lists) == """
-  #          <p>
-  #            paragraph
-  #          </p>
-  #          <p>
-  #            b1
-  #          </p>
-  #          <p>
-  #            b2
-  #          </p>
-  #          <p>
-  #            b3
-  #          </p>
-  #          <p>
-  #            one
-  #          </p>
-  #          <p>
-  #            aaa
-  #          </p>
-  #          <p>
-  #            two
-  #          </p>
-  #          """
-  # end
+  test "lists" do
+    assert render_trimmed(&PortableText.portable_text/1, [value: @lists], trim: :both) == """
+           <p>
+           paragraph
+           </p>
+           <ul>
+
+           <li>
+           b1
+
+           </li>
+
+           <li>
+           b2
+           <ul>
+
+           <li>
+
+           <ul>
+
+           <li>
+           b3
+
+           </li>
+
+           </ul>
+           </li>
+
+           </ul>
+           </li>
+
+           </ul><ol>
+
+           <li>
+           one
+           <ol>
+
+           <li>
+           aaa
+
+           </li>
+
+           </ol>
+           </li>
+
+           <li>
+           two
+
+           </li>
+
+           </ol>
+           """
+  end
 
   test "paragraph" do
     assert render_trimmed(&PortableText.portable_text/1, value: @paragraph) == """
@@ -501,7 +540,7 @@ defmodule Sanity.Components.PortableTextTest do
   test "unknown type" do
     log =
       capture_log([level: :error], fn ->
-        assert render_trimmed(&PortableText.portable_text/1, value: @image) == ""
+        assert render_trimmed(&PortableText.portable_text/1, value: @image) == "\n"
       end)
 
     assert log =~ ~S'[error] unknown type: "image"'
@@ -588,7 +627,7 @@ defmodule Sanity.Components.PortableTextTest do
       assert render_trimmed(&PortableText.portable_text/1,
                mod: AssertAssignsBlock,
                value: @paragraph
-             ) == ""
+             ) == "\n"
     end
 
     test "mark" do
@@ -598,7 +637,7 @@ defmodule Sanity.Components.PortableTextTest do
 
     test "type" do
       assert render_trimmed(&PortableText.portable_text/1, mod: AssertAssignsType, value: @image) ==
-               ""
+               "\n"
     end
   end
 end

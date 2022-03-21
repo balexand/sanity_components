@@ -136,15 +136,44 @@ defmodule Sanity.Components.PortableText do
     mod = Map.get(assigns, :mod, __MODULE__)
 
     ~H"""
-    <%= for group <- blocks_to_nested_lists(@value) do %><.blocks_or_list mod={mod} group={group} /><% end %>
+    <%= for group <- blocks_to_nested_lists(@value) do %><.blocks_or_list mod={mod} value={group} /><% end %>
     """
   end
 
-  defp blocks_or_list(%{group: %{type: "blocks"}} = assigns) do
+  defp blocks_or_list(%{value: %{type: "blocks"}} = assigns) do
     ~H"""
-    <%= for block <- @group.items do %>
-    <.render_with mod={@mod} func={:type} value={block} />
+    <%= for block <- @value.items do %>
+      <.render_with mod={@mod} func={:type} value={block} />
     <% end %>
+    """
+  end
+
+  defp blocks_or_list(%{value: %{type: "bullet"}} = assigns) do
+    ~H"""
+    <ul>
+      <%= for item <- @value.items do %>
+        <.list_item value={item} />
+      <% end %>
+    </ul>
+    """
+  end
+
+  defp blocks_or_list(%{value: %{type: "number"}} = assigns) do
+    ~H"""
+    <ol>
+      <%= for item <- @value.items do %>
+        <.list_item value={item} />
+      <% end %>
+    </ol>
+    """
+  end
+
+  defp list_item(assigns) do
+    ~H"""
+    <li>
+      <%= for child <- @value.children do %><.marks marks={child.marks} {shared_props(assigns)}><%= child.text %></.marks><% end %>
+      <%= if @value[:sub_list] do %><.blocks_or_list value={@value.sub_list} /><% end %>
+    </li>
     """
   end
 
