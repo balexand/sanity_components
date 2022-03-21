@@ -94,6 +94,72 @@ defmodule Sanity.Components.PortableTextTest do
     }
   ]
 
+  @lists [
+    %{
+      _key: "2cd554b8888a",
+      _type: "block",
+      children: [
+        %{_key: "a62c8ea8edfb", _type: "span", marks: [], text: "paragraph"}
+      ],
+      mark_defs: [],
+      style: "normal"
+    },
+    %{
+      _key: "1e3423161b22",
+      _type: "block",
+      children: [%{_key: "909d56f6e943", _type: "span", marks: [], text: "b1"}],
+      level: 1,
+      list_item: "bullet",
+      mark_defs: [],
+      style: "normal"
+    },
+    %{
+      _key: "ac40b45bdd3d",
+      _type: "block",
+      children: [%{_key: "3ab5b9a1317d", _type: "span", marks: [], text: "b2"}],
+      level: 1,
+      list_item: "bullet",
+      mark_defs: [],
+      style: "normal"
+    },
+    %{
+      _key: "d33bfd25f1de",
+      _type: "block",
+      children: [%{_key: "2f4f7d0a6f6c", _type: "span", marks: [], text: "b3"}],
+      level: 3,
+      list_item: "bullet",
+      mark_defs: [],
+      style: "normal"
+    },
+    %{
+      _key: "413f085a7217",
+      _type: "block",
+      children: [%{_key: "a1cf6b208373", _type: "span", marks: [], text: "one"}],
+      level: 1,
+      list_item: "number",
+      mark_defs: [],
+      style: "normal"
+    },
+    %{
+      _key: "032199b04a97",
+      _type: "block",
+      children: [%{_key: "1c07f14262aa", _type: "span", marks: [], text: "aaa"}],
+      level: 2,
+      list_item: "number",
+      mark_defs: [],
+      style: "normal"
+    },
+    %{
+      _key: "8df4318762fb",
+      _type: "block",
+      children: [%{_key: "a1739b477855", _type: "span", marks: [], text: "two"}],
+      level: 1,
+      list_item: "number",
+      mark_defs: [],
+      style: "normal"
+    }
+  ]
+
   @paragraph [
     %{
       _key: "f71173c80e3a",
@@ -175,34 +241,56 @@ defmodule Sanity.Components.PortableTextTest do
     def type(assigns), do: super(assigns)
   end
 
+  defp render_trimmed(component, assigns, opts \\ []) do
+    result =
+      render_component(component, assigns)
+      |> String.split("\n")
+      |> Enum.map(fn string ->
+        case Keyword.get(opts, :trim, :trailing) do
+          :both -> String.trim(string)
+          :trailing -> String.trim_trailing(string)
+        end
+      end)
+      |> Enum.join("\n")
+      |> String.trim()
+
+    result <> "\n"
+  end
+
   test "blocks" do
-    assert render_component(&PortableText.portable_text/1, value: @blocks) == """
+    assert render_trimmed(&PortableText.portable_text/1, [value: @blocks], trim: :both) == """
            <h1>
-             Head 1
+           Head 1
            </h1>
+
            <h2>
-             Head 2
+           Head 2
            </h2>
+
            <h3>
-             Head 3
+           Head 3
            </h3>
+
            <h4>
-             Head 4
+           Head 4
            </h4>
+
            <h5>
-             Head 5
+           Head 5
            </h5>
+
            <h6>
-             Head 6
+           Head 6
            </h6>
+
            <blockquote>
-             quote
+           quote
            </blockquote>
            """
   end
 
   test "bold_and_italic" do
-    assert render_component(&PortableText.portable_text/1, value: @bold_and_italic) == """
+    assert render_trimmed(&PortableText.portable_text/1, value: @bold_and_italic) == """
            <p>
              A <strong>bold</strong> <strong><em>word</em></strong>
            </p>
@@ -210,7 +298,7 @@ defmodule Sanity.Components.PortableTextTest do
   end
 
   test "custom block" do
-    assert render_component(&PortableText.portable_text/1, mod: CustomBlock, value: @paragraph) ==
+    assert render_trimmed(&PortableText.portable_text/1, mod: CustomBlock, value: @paragraph) ==
              """
              <div class="custom-normal">
                Test paragraph.
@@ -219,7 +307,7 @@ defmodule Sanity.Components.PortableTextTest do
   end
 
   test "custom mark" do
-    assert render_component(&PortableText.portable_text/1,
+    assert render_trimmed(&PortableText.portable_text/1,
              mod: CustomMark,
              value: @bold_and_italic
            ) ==
@@ -231,23 +319,105 @@ defmodule Sanity.Components.PortableTextTest do
   end
 
   test "custom type image" do
-    assert render_component(&PortableText.portable_text/1, mod: CustomType, value: @image) ==
+    assert render_trimmed(&PortableText.portable_text/1, mod: CustomType, value: @image) ==
              """
              <img src="image-da994d9e87efb226111cb83dbbab832d45b1365e-1500x750-jpg">
              """
   end
 
   test "link" do
-    assert render_component(&PortableText.portable_text/1, value: @link) == """
+    assert render_trimmed(&PortableText.portable_text/1, value: @link) == """
            <p>
              <a href="http://example.com/">my link</a>
            </p>
            """
   end
 
+  test "lists" do
+    assert render_trimmed(&PortableText.portable_text/1, [value: @lists], trim: :both) == """
+           <p>
+           paragraph
+           </p>
+           <ul>
+
+           <li>
+           b1
+
+           </li>
+
+           <li>
+           b2
+           <ul>
+
+           <li>
+
+           <ul>
+
+           <li>
+           b3
+
+           </li>
+
+           </ul>
+           </li>
+
+           </ul>
+           </li>
+
+           </ul><ol>
+
+           <li>
+           one
+           <ol>
+
+           <li>
+           aaa
+
+           </li>
+
+           </ol>
+           </li>
+
+           <li>
+           two
+
+           </li>
+
+           </ol>
+           """
+  end
+
+  test "list with marks" do
+    value = [
+      %{
+        _key: "6d8b7dc4b0ef",
+        _type: "block",
+        children: [
+          %{_key: "9dc4cbbe5ae4", _type: "span", marks: ["strong"], text: "bold"}
+        ],
+        level: 1,
+        list_item: "number",
+        mark_defs: [],
+        style: "normal"
+      }
+    ]
+
+    assert render_trimmed(&PortableText.portable_text/1, value: value) == """
+           <ol>
+
+               <li>
+             <strong>bold</strong>
+
+           </li>
+
+           </ol>
+           """
+  end
+
   test "paragraph" do
     assert render_component(&PortableText.portable_text/1, value: @paragraph) == """
-           <p>
+
+             <p>
              Test paragraph.
            </p>
            """
@@ -256,7 +426,7 @@ defmodule Sanity.Components.PortableTextTest do
   test "unknown block" do
     log =
       capture_log([level: :error], fn ->
-        assert render_component(&PortableText.portable_text/1, value: @unknown_block) == """
+        assert render_trimmed(&PortableText.portable_text/1, value: @unknown_block) == """
                <p>
                  Test paragraph.
                </p>
@@ -269,7 +439,7 @@ defmodule Sanity.Components.PortableTextTest do
   test "unknown mark" do
     log =
       capture_log([level: :error], fn ->
-        assert render_component(&PortableText.portable_text/1, value: @unknown_mark) == """
+        assert render_trimmed(&PortableText.portable_text/1, value: @unknown_mark) == """
                <p>
                  A mark.
                </p>
@@ -282,7 +452,7 @@ defmodule Sanity.Components.PortableTextTest do
   test "unknown type" do
     log =
       capture_log([level: :error], fn ->
-        assert render_component(&PortableText.portable_text/1, value: @image) == "\n"
+        assert render_trimmed(&PortableText.portable_text/1, value: @image) == "\n"
       end)
 
     assert log =~ ~S'[error] unknown type: "image"'
@@ -366,19 +536,19 @@ defmodule Sanity.Components.PortableTextTest do
 
   describe "assigns passed to custom handlers" do
     test "block" do
-      assert render_component(&PortableText.portable_text/1,
+      assert render_trimmed(&PortableText.portable_text/1,
                mod: AssertAssignsBlock,
                value: @paragraph
              ) == "\n"
     end
 
     test "mark" do
-      assert render_component(&PortableText.portable_text/1, mod: AssertAssignsMark, value: @link) ==
+      assert render_trimmed(&PortableText.portable_text/1, mod: AssertAssignsMark, value: @link) ==
                "<p>\n  x\n</p>\n"
     end
 
     test "type" do
-      assert render_component(&PortableText.portable_text/1, mod: AssertAssignsType, value: @image) ==
+      assert render_trimmed(&PortableText.portable_text/1, mod: AssertAssignsType, value: @image) ==
                "\n"
     end
   end

@@ -80,10 +80,63 @@ defmodule Sanity.Components.PortableText do
     mod = Map.get(assigns, :mod, __MODULE__)
 
     ~H"""
-    <%= for block <- @value do %><.render_with mod={mod} func={:type} value={block} />
-    <% end %>
+    <%= for group <- blocks_to_nested_lists(@value) do %><.blocks_or_list mod={mod} value={group} /><% end %>
     """
   end
+
+  defp blocks_to_nested_lists(blocks) do
+    blocks
+    |> Enum.chunk_by(fn block -> block[:list_item] end)
+    |> Enum.map(fn
+      [%{list_item: list_item} | _] = items when not is_nil(list_item) ->
+        nest_list(items, %{type: list_item, level: 1, items: []})
+
+      [%{} | _] = blocks ->
+        %{type: "blocks", items: blocks}
+    end)
+  end
+
+  defp nest_list([], acc) do
+    update_in(acc.items, &Enum.reverse/1)
+  end
+
+  defp nest_list([%{level: level} = item | rest], %{level: level} = acc) do
+    nest_list(rest, prepend_to_list(item, acc))
+  end
+
+  defp nest_list([%{level: level, list_item: list_item} | _] = items, acc)
+       when level > acc.level do
+    {deeper_items, rest} = Enum.split_while(items, fn i -> i.level > acc.level end)
+
+    sub_list = nest_list(deeper_items, %{type: list_item, level: acc.level + 1, items: []})
+
+    acc =
+      case acc do
+        %{items: [last_item | acc_rest]} ->
+          put_in(acc.items, [Map.put(last_item, :sub_list, sub_list) | acc_rest])
+
+        %{items: []} ->
+          empty_list_block(%{level: acc.level + 1, list_item: acc.type})
+          |> Map.put(:sub_list, sub_list)
+          |> prepend_to_list(acc)
+      end
+
+    nest_list(rest, acc)
+  end
+
+  defp empty_list_block(%{level: level, list_item: list_item}) do
+    %{
+      _key: :crypto.strong_rand_bytes(6) |> Base.encode16(case: :lower),
+      _type: "block",
+      children: [],
+      level: level,
+      list_item: list_item,
+      mark_defs: [],
+      style: "normal"
+    }
+  end
+
+  defp prepend_to_list(item, %{items: items} = list), do: %{list | items: [item | items]}
 
   defp render_with(assigns) do
     {func, assigns} = Map.pop!(assigns, :func)
@@ -93,12 +146,55 @@ defmodule Sanity.Components.PortableText do
 
   defp shared_props(assigns), do: Map.take(assigns, [:mod, :value])
 
+  defp blocks_or_list(%{value: %{type: "blocks"}} = assigns) do
+    ~H"""
+    <%= for block <- @value.items do %>
+      <.render_with mod={@mod} func={:type} value={block} />
+    <% end %>
+    """
+  end
+
+  defp blocks_or_list(%{value: %{type: "bullet"}} = assigns) do
+    ~H"""
+    <ul>
+      <%= for item <- @value.items do %>
+        <.list_item mod={@mod} value={item} />
+      <% end %>
+    </ul>
+    """
+  end
+
+  defp blocks_or_list(%{value: %{type: "number"}} = assigns) do
+    ~H"""
+    <ol>
+      <%= for item <- @value.items do %>
+        <.list_item mod={@mod} value={item} />
+      <% end %>
+    </ol>
+    """
+  end
+
+  defp list_item(assigns) do
+    ~H"""
+    <li>
+      <.children {shared_props(assigns)} />
+      <%= if @value[:sub_list] do %><.blocks_or_list mod={@mod} value={@value.sub_list} /><% end %>
+    </li>
+    """
+  end
+
+  defp children(assigns) do
+    ~H"""
+    <%= for child <- @value.children do %><.marks marks={child.marks} {shared_props(assigns)}><%= child.text %></.marks><% end %>
+    """
+  end
+
   @doc false
   @impl true
   def type(%{value: %{_type: "block"}} = assigns) do
     ~H"""
     <.render_with func={:block} {shared_props(assigns)}>
-      <%= for child <- @value.children do %><.marks marks={child.marks} {shared_props(assigns)}><%= child.text %></.marks><% end %>
+      <.children {shared_props(assigns)} />
     </.render_with>
     """
   end
