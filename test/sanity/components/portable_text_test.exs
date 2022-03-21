@@ -387,6 +387,33 @@ defmodule Sanity.Components.PortableTextTest do
            """
   end
 
+  test "list with marks" do
+    value = [
+      %{
+        _key: "6d8b7dc4b0ef",
+        _type: "block",
+        children: [
+          %{_key: "9dc4cbbe5ae4", _type: "span", marks: ["strong"], text: "bold"}
+        ],
+        level: 1,
+        list_item: "number",
+        mark_defs: [],
+        style: "normal"
+      }
+    ]
+
+    assert render_trimmed(&PortableText.portable_text/1, value: value) == """
+           <ol>
+
+               <li>
+             <strong>bold</strong>
+
+           </li>
+
+           </ol>
+           """
+  end
+
   test "paragraph" do
     assert render_component(&PortableText.portable_text/1, value: @paragraph) == """
 

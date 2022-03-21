@@ -160,7 +160,7 @@ defmodule Sanity.Components.PortableText do
     ~H"""
     <ul>
       <%= for item <- @value.items do %>
-        <.list_item value={item} />
+        <.list_item mod={@mod} value={item} />
       <% end %>
     </ul>
     """
@@ -170,7 +170,7 @@ defmodule Sanity.Components.PortableText do
     ~H"""
     <ol>
       <%= for item <- @value.items do %>
-        <.list_item value={item} />
+        <.list_item mod={@mod} value={item} />
       <% end %>
     </ol>
     """
@@ -180,7 +180,7 @@ defmodule Sanity.Components.PortableText do
     ~H"""
     <li>
       <%= for child <- @value.children do %><.marks marks={child.marks} {shared_props(assigns)}><%= child.text %></.marks><% end %>
-      <%= if @value[:sub_list] do %><.blocks_or_list value={@value.sub_list} /><% end %>
+      <%= if @value[:sub_list] do %><.blocks_or_list mod={@mod} value={@value.sub_list} /><% end %>
     </li>
     """
   end
