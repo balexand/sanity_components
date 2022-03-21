@@ -142,7 +142,8 @@ defmodule Sanity.Components.PortableText do
 
   defp blocks_or_list(%{group: %{type: "blocks"}} = assigns) do
     ~H"""
-    <%= for block <- @group.items do %><.render_with mod={@mod} func={:type} value={block} />
+    <%= for block <- @group.items do %>
+    <.render_with mod={@mod} func={:type} value={block} />
     <% end %>
     """
   end

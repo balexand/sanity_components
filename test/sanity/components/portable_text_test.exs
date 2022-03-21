@@ -241,26 +241,37 @@ defmodule Sanity.Components.PortableTextTest do
     def type(assigns), do: super(assigns)
   end
 
+  defp render_trimmed(component, assigns) do
+    render_component(component, assigns)
+    |> String.trim_leading()
+  end
+
   test "blocks" do
-    assert render_component(&PortableText.portable_text/1, value: @blocks) == """
+    assert render_trimmed(&PortableText.portable_text/1, value: @blocks) == """
            <h1>
              Head 1
            </h1>
+
            <h2>
              Head 2
            </h2>
+
            <h3>
              Head 3
            </h3>
+
            <h4>
              Head 4
            </h4>
+
            <h5>
              Head 5
            </h5>
+
            <h6>
              Head 6
            </h6>
+
            <blockquote>
              quote
            </blockquote>
@@ -268,7 +279,7 @@ defmodule Sanity.Components.PortableTextTest do
   end
 
   test "bold_and_italic" do
-    assert render_component(&PortableText.portable_text/1, value: @bold_and_italic) == """
+    assert render_trimmed(&PortableText.portable_text/1, value: @bold_and_italic) == """
            <p>
              A <strong>bold</strong> <strong><em>word</em></strong>
            </p>
@@ -276,7 +287,7 @@ defmodule Sanity.Components.PortableTextTest do
   end
 
   test "custom block" do
-    assert render_component(&PortableText.portable_text/1, mod: CustomBlock, value: @paragraph) ==
+    assert render_trimmed(&PortableText.portable_text/1, mod: CustomBlock, value: @paragraph) ==
              """
              <div class="custom-normal">
                Test paragraph.
@@ -285,7 +296,7 @@ defmodule Sanity.Components.PortableTextTest do
   end
 
   test "custom mark" do
-    assert render_component(&PortableText.portable_text/1,
+    assert render_trimmed(&PortableText.portable_text/1,
              mod: CustomMark,
              value: @bold_and_italic
            ) ==
@@ -297,14 +308,14 @@ defmodule Sanity.Components.PortableTextTest do
   end
 
   test "custom type image" do
-    assert render_component(&PortableText.portable_text/1, mod: CustomType, value: @image) ==
+    assert render_trimmed(&PortableText.portable_text/1, mod: CustomType, value: @image) ==
              """
              <img src="image-da994d9e87efb226111cb83dbbab832d45b1365e-1500x750-jpg">
              """
   end
 
   test "link" do
-    assert render_component(&PortableText.portable_text/1, value: @link) == """
+    assert render_trimmed(&PortableText.portable_text/1, value: @link) == """
            <p>
              <a href="http://example.com/">my link</a>
            </p>
@@ -454,7 +465,7 @@ defmodule Sanity.Components.PortableTextTest do
   # end
 
   test "paragraph" do
-    assert render_component(&PortableText.portable_text/1, value: @paragraph) == """
+    assert render_trimmed(&PortableText.portable_text/1, value: @paragraph) == """
            <p>
              Test paragraph.
            </p>
@@ -464,7 +475,7 @@ defmodule Sanity.Components.PortableTextTest do
   test "unknown block" do
     log =
       capture_log([level: :error], fn ->
-        assert render_component(&PortableText.portable_text/1, value: @unknown_block) == """
+        assert render_trimmed(&PortableText.portable_text/1, value: @unknown_block) == """
                <p>
                  Test paragraph.
                </p>
@@ -477,7 +488,7 @@ defmodule Sanity.Components.PortableTextTest do
   test "unknown mark" do
     log =
       capture_log([level: :error], fn ->
-        assert render_component(&PortableText.portable_text/1, value: @unknown_mark) == """
+        assert render_trimmed(&PortableText.portable_text/1, value: @unknown_mark) == """
                <p>
                  A mark.
                </p>
@@ -490,7 +501,7 @@ defmodule Sanity.Components.PortableTextTest do
   test "unknown type" do
     log =
       capture_log([level: :error], fn ->
-        assert render_component(&PortableText.portable_text/1, value: @image) == "\n"
+        assert render_trimmed(&PortableText.portable_text/1, value: @image) == ""
       end)
 
     assert log =~ ~S'[error] unknown type: "image"'
@@ -574,20 +585,20 @@ defmodule Sanity.Components.PortableTextTest do
 
   describe "assigns passed to custom handlers" do
     test "block" do
-      assert render_component(&PortableText.portable_text/1,
+      assert render_trimmed(&PortableText.portable_text/1,
                mod: AssertAssignsBlock,
                value: @paragraph
-             ) == "\n"
+             ) == ""
     end
 
     test "mark" do
-      assert render_component(&PortableText.portable_text/1, mod: AssertAssignsMark, value: @link) ==
+      assert render_trimmed(&PortableText.portable_text/1, mod: AssertAssignsMark, value: @link) ==
                "<p>\n  x\n</p>\n"
     end
 
     test "type" do
-      assert render_component(&PortableText.portable_text/1, mod: AssertAssignsType, value: @image) ==
-               "\n"
+      assert render_trimmed(&PortableText.portable_text/1, mod: AssertAssignsType, value: @image) ==
+               ""
     end
   end
 end
