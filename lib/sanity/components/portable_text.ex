@@ -90,19 +90,44 @@ defmodule Sanity.Components.PortableText do
   end
 
   defp nest_list([%{level: level} = item | rest], %{level: level} = acc) do
-    nest_list(rest, prepend_item(acc, item))
+    nest_list(rest, prepend_item(item, acc))
   end
 
   defp nest_list([%{level: level, list_item: list_item} | _] = items, acc)
        when level > acc.level do
     {deeper_items, rest} = Enum.split_while(items, fn i -> i.level > acc.level end)
 
-    nested_list = nest_list(deeper_items, %{type: list_item, level: acc.level + 1, items: []})
+    sub_list = nest_list(deeper_items, %{type: list_item, level: acc.level + 1, items: []})
 
-    nest_list(rest, prepend_item(acc, nested_list))
+    acc =
+      case acc do
+        %{items: [last_item | acc_rest]} ->
+          put_in(acc.items, [Map.put(last_item, :sub_list, sub_list) | acc_rest])
+
+        %{items: []} ->
+          empty_list_block(%{level: acc.level + 1, list_item: acc.type})
+          |> Map.put(:sub_list, sub_list)
+          |> prepend_item(acc)
+      end
+
+    nest_list(rest, acc)
   end
 
-  defp prepend_item(%{items: items} = list, item), do: %{list | items: [item | items]}
+  defp empty_list_block(%{level: level, list_item: list_item}) do
+    %{
+      # _key must be unique within list, but we will only be inserting one empty value per list so
+      # we can use a constant
+      _key: "emptyitem",
+      _type: "block",
+      children: [],
+      level: level,
+      list_item: list_item,
+      mark_defs: [],
+      style: "normal"
+    }
+  end
+
+  defp prepend_item(item, %{items: items} = list), do: %{list | items: [item | items]}
 
   @doc """
   Renders Sanity CMS portable text. See module doc for examples.

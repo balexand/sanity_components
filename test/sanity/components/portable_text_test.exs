@@ -347,30 +347,39 @@ defmodule Sanity.Components.PortableTextTest do
                    level: 1,
                    list_item: "bullet",
                    mark_defs: [],
-                   style: "normal"
-                 },
-                 %{
-                   type: "bullet",
-                   level: 2,
-                   items: [
-                     %{
-                       type: "bullet",
-                       level: 3,
-                       items: [
-                         %{
-                           _key: "d33bfd25f1de",
-                           _type: "block",
-                           children: [
-                             %{_key: "2f4f7d0a6f6c", _type: "span", marks: [], text: "b3"}
-                           ],
+                   style: "normal",
+                   sub_list: %{
+                     type: "bullet",
+                     level: 2,
+                     items: [
+                       %{
+                         _key: "emptyitem",
+                         _type: "block",
+                         children: [],
+                         level: 3,
+                         list_item: "bullet",
+                         mark_defs: [],
+                         style: "normal",
+                         sub_list: %{
+                           type: "bullet",
                            level: 3,
-                           list_item: "bullet",
-                           mark_defs: [],
-                           style: "normal"
+                           items: [
+                             %{
+                               _key: "d33bfd25f1de",
+                               _type: "block",
+                               children: [
+                                 %{_key: "2f4f7d0a6f6c", _type: "span", marks: [], text: "b3"}
+                               ],
+                               level: 3,
+                               list_item: "bullet",
+                               mark_defs: [],
+                               style: "normal"
+                             }
+                           ]
                          }
-                       ]
-                     }
-                   ]
+                       }
+                     ]
+                   }
                  }
                ]
              },
@@ -385,22 +394,24 @@ defmodule Sanity.Components.PortableTextTest do
                    level: 1,
                    list_item: "number",
                    mark_defs: [],
-                   style: "normal"
-                 },
-                 %{
-                   type: "number",
-                   level: 2,
-                   items: [
-                     %{
-                       _key: "032199b04a97",
-                       _type: "block",
-                       children: [%{_key: "1c07f14262aa", _type: "span", marks: [], text: "aaa"}],
-                       level: 2,
-                       list_item: "number",
-                       mark_defs: [],
-                       style: "normal"
-                     }
-                   ]
+                   style: "normal",
+                   sub_list: %{
+                     type: "number",
+                     level: 2,
+                     items: [
+                       %{
+                         _key: "032199b04a97",
+                         _type: "block",
+                         children: [
+                           %{_key: "1c07f14262aa", _type: "span", marks: [], text: "aaa"}
+                         ],
+                         level: 2,
+                         list_item: "number",
+                         mark_defs: [],
+                         style: "normal"
+                       }
+                     ]
+                   }
                  },
                  %{
                    _key: "8df4318762fb",
