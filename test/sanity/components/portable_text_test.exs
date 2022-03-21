@@ -388,8 +388,9 @@ defmodule Sanity.Components.PortableTextTest do
   end
 
   test "paragraph" do
-    assert render_trimmed(&PortableText.portable_text/1, value: @paragraph) == """
-           <p>
+    assert render_component(&PortableText.portable_text/1, value: @paragraph) == """
+
+             <p>
              Test paragraph.
            </p>
            """
