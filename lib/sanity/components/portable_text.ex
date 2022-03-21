@@ -140,6 +140,14 @@ defmodule Sanity.Components.PortableText do
 
   defp prepend_item(item, %{items: items} = list), do: %{list | items: [item | items]}
 
+  defp render_with(assigns) do
+    {func, assigns} = Map.pop!(assigns, :func)
+
+    apply(assigns.mod, func, [assigns])
+  end
+
+  defp shared_props(assigns), do: Map.take(assigns, [:mod, :value])
+
   defp blocks_or_list(%{value: %{type: "blocks"}} = assigns) do
     ~H"""
     <%= for block <- @value.items do %>
@@ -176,14 +184,6 @@ defmodule Sanity.Components.PortableText do
     </li>
     """
   end
-
-  defp render_with(assigns) do
-    {func, assigns} = Map.pop!(assigns, :func)
-
-    apply(assigns.mod, func, [assigns])
-  end
-
-  defp shared_props(assigns), do: Map.take(assigns, [:mod, :value])
 
   @doc false
   @impl true
