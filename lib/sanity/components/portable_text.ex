@@ -101,7 +101,7 @@ defmodule Sanity.Components.PortableText do
   end
 
   defp nest_list([%{level: level} = item | rest], %{level: level} = acc) do
-    nest_list(rest, prepend_item(item, acc))
+    nest_list(rest, prepend_to_list(item, acc))
   end
 
   defp nest_list([%{level: level, list_item: list_item} | _] = items, acc)
@@ -118,7 +118,7 @@ defmodule Sanity.Components.PortableText do
         %{items: []} ->
           empty_list_block(%{level: acc.level + 1, list_item: acc.type})
           |> Map.put(:sub_list, sub_list)
-          |> prepend_item(acc)
+          |> prepend_to_list(acc)
       end
 
     nest_list(rest, acc)
@@ -136,7 +136,7 @@ defmodule Sanity.Components.PortableText do
     }
   end
 
-  defp prepend_item(item, %{items: items} = list), do: %{list | items: [item | items]}
+  defp prepend_to_list(item, %{items: items} = list), do: %{list | items: [item | items]}
 
   defp render_with(assigns) do
     {func, assigns} = Map.pop!(assigns, :func)
