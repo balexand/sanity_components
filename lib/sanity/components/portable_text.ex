@@ -184,7 +184,7 @@ defmodule Sanity.Components.PortableText do
     </li>
     """
   end
-  
+
   defp children(assigns) do
     ~H"""
     <%= for child <- @value.children do %><.marks marks={child.marks} {shared_props(assigns)}><%= child.text %></.marks><% end %>
