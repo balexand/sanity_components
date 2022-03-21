@@ -84,7 +84,7 @@ defmodule Sanity.Components.PortableText do
     """
   end
 
-  def blocks_to_nested_lists(blocks) do
+  defp blocks_to_nested_lists(blocks) do
     blocks
     |> Enum.chunk_by(fn block -> block[:list_item] end)
     |> Enum.map(fn
