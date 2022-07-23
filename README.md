@@ -18,7 +18,7 @@ end
 
 ## Usage
 
-Start by fetching data from Sanity CMS using the [`sanity` client library](https://github.com/balexand/sanity). Components in this package expect map keys to be atoms in `underscore_case`. Use [`Sanity.atomize_and_underscore/1`](https://hexdocs.pm/sanity/Sanity.html#atomize_and_underscore/1) to convert keys to this format.
+Start by fetching data from Sanity CMS using the [`sanity` client library](https://github.com/balexand/sanity). Components in this package expect map keys to be atoms in `underscore_case`.
 
 See docs for:
 
