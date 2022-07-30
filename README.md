@@ -1,6 +1,6 @@
 # `Sanity.Components`
 
-[![Package](https://img.shields.io/badge/-Package-important)](https://hex.pm/packages/sanity_components) [![Documentation](https://img.shields.io/badge/-Documentation-blueviolet)](https://hexdocs.pm/sanity_components)
+[![Package](https://img.shields.io/hexpm/v/sanity_components.svg)](https://hex.pm/packages/sanity_components) [![Documentation](http://img.shields.io/badge/hex.pm-docs-green.svg?style=flat)](https://hexdocs.pm/sanity_components) ![CI](https://github.com/balexand/sanity_components/actions/workflows/elixir.yml/badge.svg)
 
 Phoenix components for rendering Sanity CMS data, including portable text and images.
 
