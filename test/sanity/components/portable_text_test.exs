@@ -425,7 +425,7 @@ defmodule Sanity.Components.PortableTextTest do
 
   test "unknown block" do
     log =
-      capture_log([level: :error], fn ->
+      capture_log([level: :warn], fn ->
         assert render_trimmed(&PortableText.portable_text/1, value: @unknown_block) == """
                <p>
                  Test paragraph.
@@ -433,12 +433,12 @@ defmodule Sanity.Components.PortableTextTest do
                """
       end)
 
-    assert log =~ ~S'[error] unknown block style: "style-x"'
+    assert log =~ ~S'[warning] unknown block style: "style-x"'
   end
 
   test "unknown mark" do
     log =
-      capture_log([level: :error], fn ->
+      capture_log([level: :warn], fn ->
         assert render_trimmed(&PortableText.portable_text/1, value: @unknown_mark) == """
                <p>
                  A mark.
@@ -446,16 +446,16 @@ defmodule Sanity.Components.PortableTextTest do
                """
       end)
 
-    assert log =~ ~S'[error] unknown mark type: "light"'
+    assert log =~ ~S'[warning] unknown mark type: "light"'
   end
 
   test "unknown type" do
     log =
-      capture_log([level: :error], fn ->
+      capture_log([level: :warn], fn ->
         assert render_trimmed(&PortableText.portable_text/1, value: @image) == "\n"
       end)
 
-    assert log =~ ~S'[error] unknown type: "image"'
+    assert log =~ ~S'[warning] unknown type: "image"'
   end
 
   defmodule AssertAssignsBlock do
