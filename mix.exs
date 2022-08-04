@@ -9,7 +9,7 @@ defmodule Sanity.Components.MixProject do
       description:
         "Phoenix components for rendering Sanity CMS data, including portable text and images.",
       version: @version,
-      elixir: "~> 1.12",
+      elixir: "~> 1.13",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       package: [
