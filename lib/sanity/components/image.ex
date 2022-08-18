@@ -49,6 +49,7 @@ defmodule Sanity.Components.Image do
          dimensions: %{height: height, width: width},
          palette: %{dominant: %{background: background}}
        },
+       mime_type: mime_type,
        url: url
      }, assigns} = Map.pop!(assigns, :image)
 
@@ -59,10 +60,19 @@ defmodule Sanity.Components.Image do
       |> Map.put_new(:width, width)
       |> Map.put_new(:style, "--sanity-image-bg: #{background}")
       |> Map.put_new(:sizes, "100vw")
+      |> put_src(url, mime_type)
 
     ~H"""
-    <img {assigns} src={image_url(url, 1024)} srcset={srcset(url)} />
+    <img {assigns} />
     """
+  end
+
+  defp put_src(assigns, url, "image/svg+xml") do
+    Map.put(assigns, :src, url)
+  end
+
+  defp put_src(assigns, url, _mime_type) do
+    Map.merge(assigns, %{src: image_url(url, 1024), srcset: srcset(url)})
   end
 
   defp image_url(url, size) when is_binary(url) and is_integer(size) do
