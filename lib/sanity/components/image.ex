@@ -29,6 +29,26 @@ defmodule Sanity.Components.Image do
 
   @breakpoints [320, 768, 1024, 1600, 2048]
 
+  @projection """
+  {
+    _id,
+    _type,
+    metadata {
+      dimensions { height, width },
+      palette {
+        dominant { background }
+      },
+    },
+    mimeType,
+    url,
+  }
+  """
+
+  @doc """
+  Returns a GROQ projection for a Sanity image.
+  """
+  def projection, do: @projection
+
   @doc """
   Renders a responsive sanity image.
 
