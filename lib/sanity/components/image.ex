@@ -17,6 +17,7 @@ defmodule Sanity.Components.Image do
             dimensions: %{height: 750, width: 1500},
             palette: %{dominant: %{background: "#0844c5"}}
           },
+          mime_type: "image/jpeg",
           url:
             "https://cdn.sanity.io/images/csbsxnjq/production/da994d9e87efb226111cb83dbbab832d45b1365e-1500x750.jpg"
         }
