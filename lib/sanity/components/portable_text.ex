@@ -271,9 +271,9 @@ defmodule Sanity.Components.PortableText do
     """
   end
 
-  def mark(%{mark_type: "link", value: value} = assigns) do
+  def mark(%{mark_type: "link"} = assigns) do
     ~H"""
-    <a href={value.href}><%= render_slot(@inner_block) %></a>
+    <a href={@value.href}><%= render_slot(@inner_block) %></a>
     """
   end
 
