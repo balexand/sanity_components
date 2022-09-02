@@ -234,28 +234,31 @@ defmodule Sanity.Components.PortableText do
     """
   end
 
-  defp marks(%{marks: [mark | remaining_marks]} = assigns) do
-    mark_props =
-      case Enum.find(assigns.value.mark_defs, &(&1._key == mark)) do
-        nil ->
-          %{
-            mark_key: mark,
-            mark_type: mark,
-            value: nil
-          }
-
-        %{_type: type} = mark_def ->
-          %{
-            mark_key: mark,
-            mark_type: type,
-            value: mark_def
-          }
-      end
-
+  defp marks(%{marks: [_ | _]} = assigns) do
     ~H"""
-    <.render_with mod={@mod} func={:mark} {mark_props}><.marks marks={remaining_marks} {shared_props(assigns)}><%= render_slot(@inner_block) %></.marks></.render_with>
+    <.render_with mod={@mod} func={:mark} {mark_props(@value.mark_defs, List.first(@marks))}><.marks marks={remaining_marks(@marks)} {shared_props(assigns)}><%= render_slot(@inner_block) %></.marks></.render_with>
     """
   end
+
+  defp mark_props(mark_defs, mark) do
+    case Enum.find(mark_defs, &(&1._key == mark)) do
+      nil ->
+        %{
+          mark_key: mark,
+          mark_type: mark,
+          value: nil
+        }
+
+      %{_type: type} = mark_def ->
+        %{
+          mark_key: mark,
+          mark_type: type,
+          value: mark_def
+        }
+    end
+  end
+
+  defp remaining_marks([_first | remaining]), do: remaining
 
   @doc false
   @impl true
