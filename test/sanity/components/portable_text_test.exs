@@ -199,6 +199,11 @@ defmodule Sanity.Components.PortableTextTest do
     }
   ]
 
+  test "to_plain_text" do
+    assert PortableText.to_plain_text(@blocks) ==
+             "Head 1\n\nHead 2\n\nHead 3\n\nHead 4\n\nHead 5\n\nHead 6\n\nquote"
+  end
+
   defmodule CustomBlock do
     use Phoenix.Component
     use PortableText

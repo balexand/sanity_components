@@ -84,6 +84,26 @@ defmodule Sanity.Components.PortableText do
     """
   end
 
+  @doc """
+  Converts list of blocks to plain text.
+  """
+  def to_plain_text(blocks) when is_list(blocks) do
+    blocks
+    |> Enum.filter(fn
+      %{_type: "block", children: [_ | _]} -> true
+      _ -> false
+    end)
+    |> Enum.map(fn %{children: children} ->
+      children
+      |> Enum.map(fn
+        %{_type: "span", text: text} -> text
+        _ -> ""
+      end)
+      |> Enum.join(" ")
+    end)
+    |> Enum.join("\n\n")
+  end
+
   defp blocks_to_nested_lists(blocks) do
     blocks
     |> Enum.chunk_by(fn block -> block[:list_item] end)
