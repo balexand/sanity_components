@@ -57,7 +57,8 @@ defmodule Sanity.Components.Image do
   resizing the images and serving WebP images to supported
   browsers](https://www.sanity.io/docs/image-urls).
 
-  The `width` and `height` attributes will be automatically set. This ensures that on [modern
+  The `width` and `height` attributes will be automatically set to the dimensions of the image.
+  This ensures that on [modern
   browsers](https://caniuse.com/mdn-html_elements_img_aspect_ratio_computed_from_attributes) the
   image will have the correct aspect ratio before the image loads. This avoids [layout
   shift](https://web.dev/cls/).
@@ -89,9 +90,7 @@ defmodule Sanity.Components.Image do
   defp src(%{mime_type: "image/svg+xml", url: url}), do: url
   defp src(%{mime_type: _, url: url}), do: image_url(url, 1024)
 
-  defp srcset(%{mime_type: "image/svg+xml"}) do
-    nil
-  end
+  defp srcset(%{mime_type: "image/svg+xml"}), do: nil
 
   defp srcset(%{mime_type: _, url: url}) do
     {breakpoints, [last_breakpoint]} = Enum.split(@breakpoints, -1)
