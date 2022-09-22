@@ -58,56 +58,51 @@ defmodule Sanity.Components.Image do
   browsers](https://www.sanity.io/docs/image-urls). The `sizes` attribute will default to `100vw`.
 
   The `width` and `height` attributes will be automatically set. This ensures that on [modern
-  browsers](https://caniuse.com/mdn-html_elements_img_aspect_ratio_computed_from_attributes)  the
+  browsers](https://caniuse.com/mdn-html_elements_img_aspect_ratio_computed_from_attributes) the
   image will have the correct aspect ratio before the image loads. This avoids [layout
   shift](https://web.dev/cls/).
 
   See module doc for example.
   """
+
+  attr :height, :integer
+  attr :width, :integer
+  attr :style, :string
+  attr :sizes, :string, default: "100vw"
+
   def sanity_image(assigns) do
-    {%{
-       metadata: %{
-         dimensions: %{height: height, width: width},
-         palette: %{dominant: %{background: background}}
-       },
-       mime_type: mime_type,
-       url: url
-     }, assigns} = Map.pop!(assigns, :image)
+    metadata = assigns.image.metadata
 
     assigns =
       assigns
-      |> Map.drop([:__changed__])
-      |> Map.put_new(:height, height)
-      |> Map.put_new(:width, width)
-      |> Map.put_new(:style, "--sanity-image-bg: #{background}")
-      |> Map.put_new(:sizes, "100vw")
-      |> put_src(url, mime_type)
+      |> assign_new(:height, fn -> metadata.dimensions.height end)
+      |> assign_new(:width, fn -> metadata.dimensions.width end)
+      |> assign_new(:style, fn -> "--sanity-image-bg: #{metadata.palette.dominant.background}" end)
 
     ~H"""
-    <img {assigns} />
+    <img height={@height} width={@width} style={@style} sizes={@sizes} src={src(@image)} srcset={srcset(@image)} />
     """
   end
 
-  defp put_src(assigns, url, "image/svg+xml") do
-    Map.put(assigns, :src, url)
+  defp src(%{mime_type: "image/svg+xml", url: url}), do: url
+  defp src(%{mime_type: _, url: url}), do: image_url(url, 1024)
+
+  defp srcset(%{mime_type: "image/svg+xml"}) do
+    nil
   end
 
-  defp put_src(assigns, url, _mime_type) do
-    Map.merge(assigns, %{src: image_url(url, 1024), srcset: srcset(url)})
-  end
-
-  defp image_url(url, size) when is_binary(url) and is_integer(size) do
-    params = %{auto: "format", fit: "min", w: size}
-
-    "#{url}?#{URI.encode_query(params)}"
-  end
-
-  defp srcset(url) when is_binary(url) do
+  defp srcset(%{mime_type: _, url: url}) do
     {breakpoints, [last_breakpoint]} = Enum.split(@breakpoints, -1)
 
     breakpoints
     |> Enum.map(fn w -> "#{image_url(url, w)} #{w}w" end)
     |> Enum.concat([image_url(url, last_breakpoint)])
     |> Enum.join(",")
+  end
+
+  defp image_url(url, size) when is_binary(url) and is_integer(size) do
+    params = %{auto: "format", fit: "min", w: size}
+
+    "#{url}?#{URI.encode_query(params)}"
   end
 end
