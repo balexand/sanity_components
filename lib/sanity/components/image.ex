@@ -55,7 +55,7 @@ defmodule Sanity.Components.Image do
 
   The `src` and `srcset` attributes will be automatically set. Sanity CMS will [take care of
   resizing the images and serving WebP images to supported
-  browsers](https://www.sanity.io/docs/image-urls). The `sizes` attribute will default to `100vw`.
+  browsers](https://www.sanity.io/docs/image-urls).
 
   The `width` and `height` attributes will be automatically set. This ensures that on [modern
   browsers](https://caniuse.com/mdn-html_elements_img_aspect_ratio_computed_from_attributes) the
