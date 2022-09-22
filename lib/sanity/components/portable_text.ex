@@ -76,11 +76,13 @@ defmodule Sanity.Components.PortableText do
   @doc """
   Renders Sanity CMS portable text. See module doc for examples.
   """
-  def portable_text(assigns) do
-    mod = Map.get(assigns, :mod, __MODULE__)
 
+  attr :value, :any, required: true
+  attr :mod, :atom, default: __MODULE__
+
+  def portable_text(assigns) do
     ~H"""
-    <%= for group <- blocks_to_nested_lists(@value) do %><.blocks_or_list mod={mod} value={group} /><% end %>
+    <%= for group <- blocks_to_nested_lists(@value) do %><.blocks_or_list mod={@mod} value={group} /><% end %>
     """
   end
 
@@ -164,7 +166,9 @@ defmodule Sanity.Components.PortableText do
     apply(assigns.mod, func, [assigns])
   end
 
-  defp shared_props(assigns), do: Map.take(assigns, [:mod, :value])
+  defp put_shared_props(assigns) do
+    assign(assigns, :shared_props, Map.take(assigns, [:mod, :value]))
+  end
 
   defp blocks_or_list(%{value: %{type: "blocks"}} = assigns) do
     ~H"""
@@ -195,26 +199,32 @@ defmodule Sanity.Components.PortableText do
   end
 
   defp list_item(assigns) do
+    assigns = put_shared_props(assigns)
+
     ~H"""
     <li>
-      <.children {shared_props(assigns)} />
+      <.children {@shared_props} />
       <%= if @value[:sub_list] do %><.blocks_or_list mod={@mod} value={@value.sub_list} /><% end %>
     </li>
     """
   end
 
   defp children(assigns) do
+    assigns = put_shared_props(assigns)
+
     ~H"""
-    <%= for child <- @value.children do %><.marks marks={child.marks} {shared_props(assigns)}><%= child.text %></.marks><% end %>
+    <%= for child <- @value.children do %><.marks marks={child.marks} {@shared_props}><%= child.text %></.marks><% end %>
     """
   end
 
   @doc false
   @impl true
   def type(%{value: %{_type: "block"}} = assigns) do
+    assigns = put_shared_props(assigns)
+
     ~H"""
-    <.render_with func={:block} {shared_props(assigns)}>
-      <.children {shared_props(assigns)} />
+    <.render_with func={:block} {@shared_props}>
+      <.children {@shared_props} />
     </.render_with>
     """
   end
@@ -230,7 +240,7 @@ defmodule Sanity.Components.PortableText do
   def block(%{value: %{_type: "block", style: style}} = assigns)
       when style in ["blockquote", "h1", "h2", "h3", "h4", "h5", "h6"] do
     ~H"""
-    <%= Phoenix.HTML.Tag.content_tag style do %><%= render_slot(@inner_block) %><% end %>
+    <.dynamic_tag name={@value.style}><%= render_slot(@inner_block) %></.dynamic_tag>
     """
   end
 
@@ -255,8 +265,10 @@ defmodule Sanity.Components.PortableText do
   end
 
   defp marks(%{marks: [_ | _]} = assigns) do
+    assigns = put_shared_props(assigns)
+
     ~H"""
-    <.render_with mod={@mod} func={:mark} {mark_props(@value.mark_defs, List.first(@marks))}><.marks marks={remaining_marks(@marks)} {shared_props(assigns)}><%= render_slot(@inner_block) %></.marks></.render_with>
+    <.render_with mod={@mod} func={:mark} {mark_props(@value.mark_defs, List.first(@marks))}><.marks marks={remaining_marks(@marks)} {@shared_props}><%= render_slot(@inner_block) %></.marks></.render_with>
     """
   end
 

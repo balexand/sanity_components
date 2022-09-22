@@ -36,7 +36,7 @@ defmodule Sanity.Components.MixProject do
   defp deps do
     [
       {:jason, "~> 1.3"},
-      {:phoenix_live_view, "~> 0.17"},
+      {:phoenix_live_view, "~> 0.18"},
 
       # dev/test
       {:dialyxir, "~> 1.0", only: :dev, runtime: false},
