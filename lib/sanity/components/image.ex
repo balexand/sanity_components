@@ -65,10 +65,12 @@ defmodule Sanity.Components.Image do
   See module doc for example.
   """
 
+  attr :image, :any, required: true
   attr :height, :integer
   attr :width, :integer
   attr :style, :string
   attr :sizes, :string, default: "100vw"
+  attr :rest, :global
 
   def sanity_image(assigns) do
     metadata = assigns.image.metadata
@@ -80,7 +82,7 @@ defmodule Sanity.Components.Image do
       |> assign_new(:style, fn -> "--sanity-image-bg: #{metadata.palette.dominant.background}" end)
 
     ~H"""
-    <img height={@height} width={@width} style={@style} sizes={@sizes} src={src(@image)} srcset={srcset(@image)} />
+    <img height={@height} width={@width} style={@style} sizes={@sizes} src={src(@image)} srcset={srcset(@image)} {@rest} />
     """
   end
 
