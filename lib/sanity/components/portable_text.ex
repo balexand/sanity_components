@@ -76,11 +76,13 @@ defmodule Sanity.Components.PortableText do
   @doc """
   Renders Sanity CMS portable text. See module doc for examples.
   """
-  def portable_text(assigns) do
-    mod = Map.get(assigns, :mod, __MODULE__)
 
+  attr :value, :any, required: true
+  attr :mod, :atom, default: __MODULE__
+
+  def portable_text(assigns) do
     ~H"""
-    <%= for group <- blocks_to_nested_lists(@value) do %><.blocks_or_list mod={mod} value={group} /><% end %>
+    <%= for group <- blocks_to_nested_lists(@value) do %><.blocks_or_list mod={@mod} value={group} /><% end %>
     """
   end
 
@@ -230,7 +232,7 @@ defmodule Sanity.Components.PortableText do
   def block(%{value: %{_type: "block", style: style}} = assigns)
       when style in ["blockquote", "h1", "h2", "h3", "h4", "h5", "h6"] do
     ~H"""
-    <%= Phoenix.HTML.Tag.content_tag style do %><%= render_slot(@inner_block) %><% end %>
+    <.dynamic_tag name={@value.style}><%= render_slot(@inner_block) %></.dynamic_tag>
     """
   end
 
