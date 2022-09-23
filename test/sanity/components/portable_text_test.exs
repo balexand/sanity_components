@@ -21,6 +21,34 @@ defmodule Sanity.Components.PortableTextTest do
     }
   ]
 
+  # Along with bold and italic, these are the marks which the Sanity editor supports by default
+  @default_marks [
+    %{
+      _key: "cac150e65d8a",
+      _type: "block",
+      children: [
+        %{_key: "12b6b9acccc7", _type: "span", marks: [], text: "normal "},
+        %{
+          _key: "76e4da946506",
+          _type: "span",
+          marks: ["underline"],
+          text: "underline"
+        },
+        %{_key: "4fe55bc49e50", _type: "span", marks: [], text: " "},
+        %{
+          _key: "4e5b993c130a",
+          _type: "span",
+          marks: ["strike-through"],
+          text: "strike"
+        },
+        %{_key: "75c152797366", _type: "span", marks: [], text: " "},
+        %{_key: "1c23c2bdba45", _type: "span", marks: ["code"], text: "code"}
+      ],
+      mark_defs: [],
+      style: "normal"
+    }
+  ]
+
   @blocks [
     %{
       _key: "4a62e0041050",
@@ -298,6 +326,14 @@ defmodule Sanity.Components.PortableTextTest do
     assert render_trimmed(&PortableText.portable_text/1, value: @bold_and_italic) == """
            <p>
              A <strong>bold</strong> <strong><em>word</em></strong>
+           </p>
+           """
+  end
+
+  test "default marks" do
+    assert render_trimmed(&PortableText.portable_text/1, value: @default_marks) == """
+           <p>
+             normal <u>underline</u> <del>strike</del> <code>code</code>
            </p>
            """
   end

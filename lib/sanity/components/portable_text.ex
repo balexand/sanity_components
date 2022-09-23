@@ -294,21 +294,27 @@ defmodule Sanity.Components.PortableText do
 
   @doc false
   @impl true
-  def mark(%{mark_type: "em"} = assigns) do
+  def mark(%{mark_type: mark_type} = assigns) when mark_type in ["code", "em", "strong"] do
     ~H"""
-    <em><%= render_slot(@inner_block) %></em>
-    """
-  end
-
-  def mark(%{mark_type: "strong"} = assigns) do
-    ~H"""
-    <strong><%= render_slot(@inner_block) %></strong>
+    <.dynamic_tag name={@mark_type}><%= render_slot(@inner_block) %></.dynamic_tag>
     """
   end
 
   def mark(%{mark_type: "link"} = assigns) do
     ~H"""
     <a href={@value.href}><%= render_slot(@inner_block) %></a>
+    """
+  end
+
+  def mark(%{mark_type: "strike-through"} = assigns) do
+    ~H"""
+    <del><%= render_slot(@inner_block) %></del>
+    """
+  end
+
+  def mark(%{mark_type: "underline"} = assigns) do
+    ~H"""
+    <u><%= render_slot(@inner_block) %></u>
     """
   end
 
