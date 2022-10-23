@@ -35,7 +35,6 @@ defmodule Sanity.Components.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:jason, "~> 1.3"},
       {:phoenix_live_view, "~> 0.18"},
 
       # dev/test
