@@ -101,6 +101,23 @@ defmodule Sanity.Components.PortableTextTest do
     }
   ]
 
+  @hard_breaks [
+    %{
+      _key: "c4cbfecb933e",
+      _type: "block",
+      children: [
+        %{
+          _key: "e1486a7850340",
+          _type: "span",
+          marks: [],
+          text: "line1\nline2\n\nline3"
+        }
+      ],
+      markDefs: [],
+      style: "normal"
+    }
+  ]
+
   @image [
     %{
       _key: "d92a081af9f1",
@@ -363,6 +380,15 @@ defmodule Sanity.Components.PortableTextTest do
     assert render_trimmed(&PortableText.portable_text/1, mod: CustomType, value: @image) ==
              """
              <img src="image-da994d9e87efb226111cb83dbbab832d45b1365e-1500x750-jpg">
+             """
+  end
+
+  test "hard breaks" do
+    assert render_trimmed(&PortableText.portable_text/1, value: @hard_breaks) ==
+             """
+             <p>
+               line1<br>line2<br><br>line3
+             </p>
              """
   end
 

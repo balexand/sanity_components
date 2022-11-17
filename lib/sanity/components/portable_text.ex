@@ -213,9 +213,22 @@ defmodule Sanity.Components.PortableText do
     assigns = put_shared_props(assigns)
 
     ~H"""
-    <%= for child <- @value.children do %><.marks marks={child.marks} {@shared_props}><%= child.text %></.marks><% end %>
+    <%= for child <- @value.children do %><.marks marks={child.marks} {@shared_props}><.text text={child.text} /></.marks><% end %>
     """
   end
+
+  defp text(assigns) do
+    ~H"""
+    <%= for node <- split_text(@text) do %><.text_node node={node} /><% end %>
+    """
+  end
+
+  defp split_text(text) do
+    text |> String.replace("\r", "") |> String.split("\n") |> Enum.intersperse("\n")
+  end
+
+  defp text_node(%{node: "\n"} = assigns), do: ~H"<br>"
+  defp text_node(assigns), do: ~H"<%= @node %>"
 
   @doc false
   @impl true
