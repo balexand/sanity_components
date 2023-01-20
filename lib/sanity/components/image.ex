@@ -63,28 +63,55 @@ defmodule Sanity.Components.Image do
   image will have the correct aspect ratio before the image loads. This avoids [layout
   shift](https://web.dev/cls/).
 
+  The following CSS custom properties will be set if present in the Sanity image metadata:
+
+    - `--sanity-image-bg` - Dominant background color of image. Useful for rendering placeholders.
+    - `--sanity-image-height` and `--sanity-image-width` - Height/width of image.
+
   See module doc for example.
   """
 
   attr :image, :any, required: true
-  attr :height, :integer
-  attr :width, :integer
-  attr :style, :string
+  attr :height, :integer, default: nil
+  attr :width, :integer, default: nil
+  attr :style, :string, default: nil
   attr :sizes, :string, default: "100vw"
   attr :rest, :global
 
   def sanity_image(assigns) do
-    metadata = assigns.image.metadata
-
-    assigns =
-      assigns
-      |> assign_new(:height, fn -> metadata.dimensions.height end)
-      |> assign_new(:width, fn -> metadata.dimensions.width end)
-      |> assign_new(:style, fn -> "--sanity-image-bg: #{metadata.palette.dominant.background}" end)
-
     ~H"""
-    <img height={@height} width={@width} style={@style} sizes={@sizes} src={src(@image)} srcset={srcset(@image)} {@rest} />
+    <img
+      height={@height || @image[:metadata][:dimensions][:height]}
+      width={@width || @image[:metadata][:dimensions][:width]}
+      style={style(@style, @image)}
+      sizes={@sizes}
+      src={src(@image)}
+      srcset={srcset(@image)}
+      {@rest}
+    />
     """
+  end
+
+  defp style(style, image) do
+    custom_properties =
+      [
+        {"--sanity-image-bg", image[:metadata][:palette][:dominant][:background]},
+        {"--sanity-image-height", dimension(image, :height)},
+        {"--sanity-image-width", dimension(image, :width)}
+      ]
+      |> Enum.filter(fn {_name, value} -> value end)
+      |> Enum.map(fn {name, value} -> "#{name}: #{value}" end)
+
+    [style | custom_properties]
+    |> Enum.filter(& &1)
+    |> Enum.join(";")
+  end
+
+  defp dimension(image, key) do
+    case image[:metadata][:dimensions][key] do
+      nil -> nil
+      n -> "#{n}px"
+    end
   end
 
   defp src(%{mime_type: "image/svg+xml", url: url}), do: url
