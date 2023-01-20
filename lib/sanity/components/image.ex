@@ -63,6 +63,11 @@ defmodule Sanity.Components.Image do
   image will have the correct aspect ratio before the image loads. This avoids [layout
   shift](https://web.dev/cls/).
 
+  The following CSS custom properties will be set if present in the Sanity image metadata:
+
+    - `--sanity-image-bg` - Dominant background color of image. Useful for rendering placeholders.
+    - `--sanity-image-height` and `--sanity-image-width` - Height/width of image.
+
   See module doc for example.
   """
 
