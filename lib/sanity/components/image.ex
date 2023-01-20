@@ -69,28 +69,28 @@ defmodule Sanity.Components.Image do
   attr :image, :any, required: true
   attr :height, :integer, default: nil
   attr :width, :integer, default: nil
-  attr :style, :string
+  attr :style, :string, default: nil
   attr :sizes, :string, default: "100vw"
   attr :rest, :global
 
   def sanity_image(assigns) do
-    metadata = assigns.image.metadata
-
-    assigns =
-      assigns
-      |> assign_new(:style, fn -> "--sanity-image-bg: #{metadata.palette.dominant.background}" end)
-
     ~H"""
     <img
       height={@height || @image.metadata.dimensions.height}
       width={@width || @image.metadata.dimensions.width}
-      style={@style}
+      style={style(@style, @image)}
       sizes={@sizes}
       src={src(@image)}
       srcset={srcset(@image)}
       {@rest}
     />
     """
+  end
+
+  defp style(style, image) do
+    [style, "--sanity-image-bg: #{image.metadata.palette.dominant.background}"]
+    |> Enum.filter(& &1)
+    |> Enum.join(";")
   end
 
   defp src(%{mime_type: "image/svg+xml", url: url}), do: url
