@@ -76,8 +76,8 @@ defmodule Sanity.Components.Image do
   def sanity_image(assigns) do
     ~H"""
     <img
-      height={@height || @image.metadata.dimensions.height}
-      width={@width || @image.metadata.dimensions.width}
+      height={@height || @image[:metadata][:dimensions][:height]}
+      width={@width || @image[:metadata][:dimensions][:width]}
       style={style(@style, @image)}
       sizes={@sizes}
       src={src(@image)}
@@ -88,7 +88,14 @@ defmodule Sanity.Components.Image do
   end
 
   defp style(style, image) do
-    [style, "--sanity-image-bg: #{image.metadata.palette.dominant.background}"]
+    custom_properties =
+      [
+        {"--sanity-image-bg", image[:metadata][:palette][:dominant][:background]}
+      ]
+      |> Enum.filter(fn {_name, value} -> value end)
+      |> Enum.map(fn {name, value} -> "#{name}: #{value}" end)
+
+    [style | custom_properties]
     |> Enum.filter(& &1)
     |> Enum.join(";")
   end
