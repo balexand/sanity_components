@@ -91,8 +91,8 @@ defmodule Sanity.Components.Image do
     custom_properties =
       [
         {"--sanity-image-bg", image[:metadata][:palette][:dominant][:background]},
-        {"--sanity-image-height", image[:metadata][:dimensions][:height]},
-        {"--sanity-image-width", image[:metadata][:dimensions][:width]}
+        {"--sanity-image-height", dimension(image, :height)},
+        {"--sanity-image-width", dimension(image, :width)}
       ]
       |> Enum.filter(fn {_name, value} -> value end)
       |> Enum.map(fn {name, value} -> "#{name}: #{value}" end)
@@ -100,6 +100,13 @@ defmodule Sanity.Components.Image do
     [style | custom_properties]
     |> Enum.filter(& &1)
     |> Enum.join(";")
+  end
+
+  defp dimension(image, key) do
+    case image[:metadata][:dimensions][key] do
+      nil -> nil
+      n -> "#{n}px"
+    end
   end
 
   defp src(%{mime_type: "image/svg+xml", url: url}), do: url
