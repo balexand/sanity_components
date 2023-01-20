@@ -90,7 +90,9 @@ defmodule Sanity.Components.Image do
   defp style(style, image) do
     custom_properties =
       [
-        {"--sanity-image-bg", image[:metadata][:palette][:dominant][:background]}
+        {"--sanity-image-bg", image[:metadata][:palette][:dominant][:background]},
+        {"--sanity-image-height", image[:metadata][:dimensions][:height]},
+        {"--sanity-image-width", image[:metadata][:dimensions][:width]}
       ]
       |> Enum.filter(fn {_name, value} -> value end)
       |> Enum.map(fn {name, value} -> "#{name}: #{value}" end)
