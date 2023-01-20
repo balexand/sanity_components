@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.0] - 2023-01-20
+### Changed
+- Support missing image metadata and ass CSS custom props (https://github.com/balexand/sanity_components/pull/25)
+
 ## [0.12.0] - 2022-11-17
 ### Changed
 - Convert "\n" in text to `<br>`. This is now consistent with the official https://github.com/portabletext/react-portabletext library.
