@@ -492,7 +492,7 @@ defmodule Sanity.Components.PortableTextTest do
 
   test "unknown block" do
     log =
-      capture_log([level: :warn], fn ->
+      capture_log([level: :warning], fn ->
         assert render_trimmed(&PortableText.portable_text/1, value: @unknown_block) == """
                <p>
                  Test paragraph.
@@ -505,7 +505,7 @@ defmodule Sanity.Components.PortableTextTest do
 
   test "unknown mark" do
     log =
-      capture_log([level: :warn], fn ->
+      capture_log([level: :warning], fn ->
         assert render_trimmed(&PortableText.portable_text/1, value: @unknown_mark) == """
                <p>
                  A mark.
@@ -518,7 +518,7 @@ defmodule Sanity.Components.PortableTextTest do
 
   test "unknown type" do
     log =
-      capture_log([level: :warn], fn ->
+      capture_log([level: :warning], fn ->
         assert render_trimmed(&PortableText.portable_text/1, value: @image) == "\n"
       end)
 

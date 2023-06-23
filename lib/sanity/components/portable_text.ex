@@ -243,7 +243,7 @@ defmodule Sanity.Components.PortableText do
   end
 
   def type(%{value: %{_type: type}} = assigns) do
-    Logger.warn("unknown type: #{inspect(type)}")
+    Logger.warning("unknown type: #{inspect(type)}")
 
     ~H""
   end
@@ -264,7 +264,7 @@ defmodule Sanity.Components.PortableText do
   end
 
   def block(%{value: %{_type: "block", style: style}} = assigns) do
-    Logger.warn("unknown block style: #{inspect(style)}")
+    Logger.warning("unknown block style: #{inspect(style)}")
 
     ~H"""
     <p><%= render_slot(@inner_block) %></p>
@@ -332,7 +332,7 @@ defmodule Sanity.Components.PortableText do
   end
 
   def mark(%{mark_type: mark_type} = assigns) do
-    Logger.warn("unknown mark type: #{inspect(mark_type)}")
+    Logger.warning("unknown mark type: #{inspect(mark_type)}")
 
     ~H"""
     <%= render_slot(@inner_block) %>
