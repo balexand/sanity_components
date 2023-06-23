@@ -129,7 +129,7 @@ defmodule Sanity.Components.Image do
   end
 
   defp image_url(url, size) when is_binary(url) and is_integer(size) do
-    params = %{auto: "format", fit: "min", w: size}
+    params = [auto: "format", fit: "min", w: size]
 
     "#{url}?#{URI.encode_query(params)}"
   end
