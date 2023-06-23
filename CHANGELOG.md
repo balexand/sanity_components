@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.1] - 2023-06-23
+### Changed
+- Elixir 1.15 updates (https://github.com/balexand/sanity_components/pull/34).
+
 ## [0.13.0] - 2023-01-20
 ### Changed
 - Support missing image metadata and ass CSS custom props (https://github.com/balexand/sanity_components/pull/25)
