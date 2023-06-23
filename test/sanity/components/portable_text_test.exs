@@ -531,7 +531,7 @@ defmodule Sanity.Components.PortableTextTest do
 
     @impl true
     def block(assigns) do
-      assert Map.keys(assigns) == [:__changed__, :inner_block, :mod, :value]
+      assert Map.keys(assigns) |> Enum.sort() == [:__changed__, :inner_block, :mod, :value]
 
       assert Map.take(assigns, [:value]) == %{
                value: %{
@@ -555,7 +555,7 @@ defmodule Sanity.Components.PortableTextTest do
 
     @impl true
     def mark(assigns) do
-      assert Map.keys(assigns) == [
+      assert Map.keys(assigns) |> Enum.sort() == [
                :__changed__,
                :inner_block,
                :mark_key,
@@ -584,7 +584,7 @@ defmodule Sanity.Components.PortableTextTest do
 
     @impl true
     def type(assigns) do
-      assert Map.keys(assigns) == [:__changed__, :mod, :value]
+      assert Map.keys(assigns) |> Enum.sort() == [:__changed__, :mod, :value]
 
       assert Map.take(assigns, [:value]) == %{
                value: %{
