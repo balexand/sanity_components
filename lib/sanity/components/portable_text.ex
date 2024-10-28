@@ -253,7 +253,7 @@ defmodule Sanity.Components.PortableText do
   def block(%{value: %{_type: "block", style: style}} = assigns)
       when style in ["blockquote", "h1", "h2", "h3", "h4", "h5", "h6"] do
     ~H"""
-    <.dynamic_tag name={@value.style}><%= render_slot(@inner_block) %></.dynamic_tag>
+    <.dynamic_tag tag_name={@value.style}><%= render_slot(@inner_block) %></.dynamic_tag>
     """
   end
 
@@ -309,7 +309,7 @@ defmodule Sanity.Components.PortableText do
   @impl true
   def mark(%{mark_type: mark_type} = assigns) when mark_type in ["code", "em", "strong"] do
     ~H"""
-    <.dynamic_tag name={@mark_type}><%= render_slot(@inner_block) %></.dynamic_tag>
+    <.dynamic_tag tag_name={@mark_type}><%= render_slot(@inner_block) %></.dynamic_tag>
     """
   end
 
