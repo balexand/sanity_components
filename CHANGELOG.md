@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.14.0] - 2024-10-28
 ### Changed
-- Require `phoenix_live_view` version `~> 1.0.0-rc.7`.
+- Require `phoenix_live_view` version `~> 1.0.0-rc.7` (https://github.com/balexand/sanity_components/pull/36).
 
 
 ## [0.13.1] - 2023-06-23
