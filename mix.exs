@@ -1,7 +1,7 @@
 defmodule Sanity.Components.MixProject do
   use Mix.Project
 
-  @version "0.13.2"
+  @version "0.14.0"
 
   def project do
     [
@@ -36,7 +36,7 @@ defmodule Sanity.Components.MixProject do
   defp deps do
     [
       # TODO bump version after 1.0 release
-      {:phoenix_live_view, "~> 0.18 or ~> 1.0.0-rc.7"},
+      {:phoenix_live_view, "~> 1.0.0-rc.7 or ~> 1.0.0"},
 
       # dev/test
       {:dialyxir, "~> 1.0", only: :dev, runtime: false},
