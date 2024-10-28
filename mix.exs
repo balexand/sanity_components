@@ -35,7 +35,8 @@ defmodule Sanity.Components.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:phoenix_live_view, "~> 0.18"},
+      # TODO bump version after 1.0 release
+      {:phoenix_live_view, "~> 0.18 or ~> 1.0.0-rc.7"},
 
       # dev/test
       {:dialyxir, "~> 1.0", only: :dev, runtime: false},
