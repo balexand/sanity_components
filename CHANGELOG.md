@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.2] - 2024-10-28
+### Changed
+- Relax version requirement for `phoenix_live_view` to allow 1.0.0.rc (https://github.com/balexand/sanity_components/pull/35).
+
+
 ## [0.13.1] - 2023-06-23
 ### Changed
 - Elixir 1.15 updates (https://github.com/balexand/sanity_components/pull/34).
